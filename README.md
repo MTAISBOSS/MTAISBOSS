@@ -32,7 +32,7 @@
 
 <div>
   <div align="center">
-    <img height="" src="https://github.com/MTAISBOSS/MTAISBOSS/blob/main/483-4832657_one-piece-flag-hd-png-download.png"/>
+    <img height="150" src="https://github.com/MTAISBOSS/MTAISBOSS/blob/main/483-4832657_one-piece-flag-hd-png-download.png"/>
   </div>
 </div>
 
