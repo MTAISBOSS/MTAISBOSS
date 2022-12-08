@@ -1,20 +1,25 @@
 ###
-<h1> MTA Is Boss</h1>
+<h1 align="center"> MTA Is Boss</h1>
 ###
-
-### Hi there 👋
-
-<!--
-**MTAISBOSS/MTAISBOSS** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+<div align="center" >
+  <img height="" src="https://github.com/MTAISBOSS/MTAISBOSS/blob/main/pixel-jeff-mario.gif"/>
+</div>
+###
+<div align="center">
+  <h3>
+    I love
+    <li>
+    Making games
+    </li>
+     <li>
+    Making music
+    </li>
+     <li>
+    Playing games
+    </li>
+     <li>
+    Anime
+    </li>
+  </h3>
+</div>
+###
