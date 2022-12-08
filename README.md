@@ -38,8 +38,3 @@
 
 ###
 
-<div>
-  <img src="https://github.com/users/MTAISBOSS/achievements/pull-shark"/>
-  </div>
-
-###
