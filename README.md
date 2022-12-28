@@ -40,8 +40,10 @@
 
 <div>
   <div align="center">
-    <img height="50" href="https://mtaisboss.itch.io/" alt="https://mtaisboss.itch.io/"     src="https://static.wikia.nocookie.net/logopedia/images/0/01/Itch_io.svg/revision/latest?cb=20220421190013"/>
-  </div>
+    <a href="https://mtaisboss.itch.io/>
+    <img height="50" alt="itch.io"     src="https://static.wikia.nocookie.net/logopedia/images/0/01/Itch_io.svg/revision/latest?cb=20220421190013"/>
+    </a>
+      </div>
 </div>
 
 ###
