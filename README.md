@@ -38,13 +38,4 @@
 
 ###
 
-<div>
-  <div align="center">
-    <a href="https://mtaisboss.itch.io/>
-    <img height="50" alt="itch.io"     src="https://static.wikia.nocookie.net/logopedia/images/0/01/Itch_io.svg/revision/latest?cb=20220421190013"/>
-    </a>
-      </div>
-</div>
-
-###
 
