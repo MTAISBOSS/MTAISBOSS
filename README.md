@@ -1,5 +1,5 @@
 # 💫 About Me:
-"As a game developer with over 7 years of experience, I’ve worked on a variety of successful projects published in the market. My curiosity and passion for innovation drive me to constantly explore new ideas, quickly learn emerging technologies, and bring fresh, creative solutions to every challenge. I thrive in dynamic environments where I can contribute my bright ideas and technical expertise to create engaging and immersive gaming experiences."<br><br>Let me know if you'd like to tweak anything!
+"As a game developer with over 7 years of experience, I’ve worked on a variety of successful projects published in the market. My curiosity and passion for innovation drive me to constantly explore new ideas, quickly learn emerging technologies, and bring fresh, creative solutions to every challenge. I thrive in dynamic environments where I can contribute my bright ideas and technical expertise to create engaging and immersive gaming experiences."
 
 
 ## 🌐 Socials:
