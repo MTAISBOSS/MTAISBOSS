@@ -94,7 +94,7 @@ With over 7 years of experience in game development and a passion for embedded s
   <a href="https://www.linkedin.com/in/mohammad-taher-ahmadi-36a504208/" target="_blank">
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
   </a>
-  <a href="https://itch.io" target="_blank">
+  <a href="https://mtaisboss.itch.io/" target="_blank">
     <img src="https://img.shields.io/badge/Itch.io-FA5C5C?style=for-the-badge&logo=itch.io&logoColor=white" alt="Itch.io">
   </a>
 </div>
