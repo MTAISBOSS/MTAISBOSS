@@ -1,457 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohammad Taher Ahmadi - Game Developer & Embedded Systems Engineer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #6e45e2;
-            --secondary: #88d3ce;
-            --dark: #1a1a2e;
-            --light: #f8f9fa;
-            --accent: #ff7e5f;
-            --synthwave-pink: #ff2a6d;
-            --synthwave-blue: #05d9e8;
-            --robotics-orange: #FF8C00;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, var(--dark), #16213e);
-            color: var(--light);
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-            overflow: hidden;
-            padding: 2rem;
-            border-radius: 15px;
-            background: rgba(26, 26, 46, 0.7);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--synthwave-pink), transparent 70%);
-            opacity: 0.2;
-            z-index: -1;
-            animation: pulse 15s infinite alternate;
-        }
-        
-        header::after {
-            content: '';
-            position: absolute;
-            bottom: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--synthwave-blue), transparent 70%);
-            opacity: 0.2;
-            z-index: -1;
-            animation: pulse2 15s infinite alternate;
-        }
-        
-        @keyframes pulse {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(20%, 20%); }
-        }
-        
-        @keyframes pulse2 {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(-20%, -20%); }
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, var(--synthwave-pink), var(--synthwave-blue));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 10px rgba(255, 42, 109, 0.3);
-        }
-        
-        .tagline {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--secondary);
-        }
-        
-        .specialization {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .specialization-badge {
-            background: rgba(255, 140, 0, 0.2);
-            color: var(--robotics-orange);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            border: 1px solid var(--robotics-orange);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .specialization-badge.blue {
-            background: rgba(5, 217, 232, 0.2);
-            color: var(--synthwave-blue);
-            border: 1px solid var(--synthwave-blue);
-        }
-        
-        .about {
-            max-width: 800px;
-            margin: 0 auto 2rem;
-            font-size: 1.1rem;
-            line-height: 1.8;
-            text-align: center;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .social-link {
-            color: var(--light);
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-        
-        .social-link:hover {
-            color: var(--accent);
-            transform: translateY(-3px);
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            margin: 3rem 0 1.5rem;
-            text-align: center;
-            position: relative;
-            color: var(--secondary);
-        }
-        
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--synthwave-pink), var(--synthwave-blue));
-            margin: 0.5rem auto;
-            border-radius: 3px;
-        }
-        
-        .tech-stack {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
-        }
-        
-        .tech-item {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .tech-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .projects {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .project-card {
-            background: rgba(26, 26, 46, 0.7);
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .project-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        .project-title {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .project-description {
-            margin-bottom: 1rem;
-            flex-grow: 1;
-        }
-        
-        .project-link {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--light);
-            border-radius: 5px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            align-self: flex-start;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .project-link:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--accent);
-        }
-        
-        .stat-card {
-            background: rgba(26, 26, 46, 0.7);
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        .stat-title {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            color: var(--secondary);
-        }
-        
-        .quote {
-            font-style: italic;
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 3rem;
-            padding: 1.5rem;
-            border-left: 3px solid var(--accent);
-            background: rgba(26, 26, 46, 0.7);
-            border-radius: 0 15px 15px 0;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 1.5rem;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .glow {
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from {
-                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--synthwave-blue), 0 0 20px var(--synthwave-blue);
-            }
-            to {
-                text-shadow: 0 0 10px #fff, 0 0 15px var(--synthwave-pink), 0 0 20px var(--synthwave-pink), 0 0 25px var(--synthwave-pink);
-            }
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .tagline {
-                font-size: 1.2rem;
-            }
-            
-            .stats, .projects {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Mohammad Taher Ahmadi</h1>
-            <div class="tagline">Game Developer & Embedded Systems Engineer</div>
-            <div class="specialization">
-                <div class="specialization-badge blue">
-                    <i class="fas fa-gamepad"></i> Game Developer
-                </div>
-                <div class="specialization-badge">
-                    <i class="fas fa-robot"></i> Robotics Enthusiast
-                </div>
-                <div class="specialization-badge">
-                    <i class="fas fa-microchip"></i> Embedded Systems
-                </div>
-            </div>
-            <div class="about">
-                "As a game developer with over 7 years of experience, I've worked on a variety of successful projects published in the market. My curiosity and passion for innovation drive me to constantly explore new ideas in both game development and embedded systems. I quickly learn emerging technologies and bring fresh, creative solutions to every challenge. I thrive in dynamic environments where I can contribute my bright ideas and technical expertise to create engaging experiences, whether in virtual worlds or physical devices."
-            </div>
-            <div class="social-links">
-                <a href="https://www.linkedin.com/in/mohammad-taher-ahmadi-36a504208/" class="social-link" target="_blank">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="https://github.com/MTAISBOSS" class="social-link" target="_blank">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://itch.io" class="social-link" target="_blank">
-                    <i class="fab fa-itch-io"></i>
-                </a>
-            </div>
-        </header>
-        
-        <h2 class="section-title">Tech Stack</h2>
-        <div class="tech-stack">
-            <div class="tech-item">
-                <i class="fab fa-unity"></i> Unity
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-code"></i> C#
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-code"></i> C++
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-code"></i> C
-            </div>
-            <div class="tech-item">
-                <i class="fab fa-python"></i> Python
-            </div>
-            <div class="tech-item">
-                <i class="fab fa-microsoft"></i> .NET
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-cube"></i> Blender
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-paint-brush"></i> Aseprite
-            </div>
-            <div class="tech-item">
-                <i class="fab fa-git-alt"></i> Git
-            </div>
-            <div class="tech-item">
-                <i class="fab fa-gitlab"></i> GitLab
-            </div>
-            <div class="tech-item">
-                <i class="fab fa-github"></i> GitHub
-            </div>
-            <div class="tech-item">
-                <i class="fab fa-jira"></i> Jira
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-list-alt"></i> Trello
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-microchip"></i> Arduino
-            </div>
-            <div class="tech-item">
-                <i class="fas fa-raspberry-pi"></i> Raspberry Pi
-            </div>
-        </div>
-        
-        <h2 class="section-title">Featured Projects</h2>
-        <div class="projects">
-            <div class="project-card">
-                <h3 class="project-title"><i class="fas fa-gamepad"></i> Game Console</h3>
-                <div class="project-description">
-                    A custom game console project showcasing my skills in both hardware and software development. This project combines embedded systems programming with game development to create a complete gaming experience.
-                </div>
-                <a href="https://github.com/MTAISBOSS/Game-Console" class="project-link" target="_blank">View Project</a>
-            </div>
-            <div class="project-card">
-                <h3 class="project-title"><i class="fas fa-lightbulb"></i> POV Display</h3>
-                <div class="project-description">
-                    A persistence of vision display created with microcontrollers and LEDs. This embedded systems project demonstrates my ability to work with hardware and create visually striking effects through precise timing and control.
-                </div>
-                <a href="https://github.com/MTAISBOSS/POV_Display" class="project-link" target="_blank">View Project</a>
-            </div>
-        </div>
-        
-        <h2 class="section-title">GitHub Stats</h2>
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-title">Profile Stats</div>
-                <img src="https://github-readme-stats.vercel.app/api?username=MTAISBOSS&theme=synthwave&hide_border=false&include_all_commits=false&count_private=false" alt="GitHub Stats" style="width: 100%;">
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Streak</div>
-                <img src="https://github-readme-streak-stats.herokuapp.com/?user=MTAISBOSS&theme=synthwave&hide_border=false" alt="GitHub Streak" style="width: 100%;">
-            </div>
-            <div class="stat-card">
-                <div class="stat-title">Top Languages</div>
-                <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=MTAISBOSS&theme=synthwave&hide_border=false&include_all_commits=false&count_private=false&layout=compact" alt="Top Languages" style="width: 100%;">
-            </div>
-        </div>
-        
-        <div class="quote">
-            <div class="stat-title glow">Random Dev Quote</div>
-            <img src="https://quotes-github-readme.vercel.app/api?type=vetical&theme=dark" alt="Random Dev Quote" style="width: 100%;">
-        </div>
-        
-        <div class="stat-card" style="text-align: center; margin-bottom: 3rem;">
-            <div class="stat-title">Top Contributed Repos</div>
-            <img src="https://github-contributor-stats.vercel.app/api?username=MTAISBOSS&limit=5&theme=synthwave&combine_all_yearly_contributions=true" alt="Top Contributed Repos" style="width: 100%;">
-        </div>
-        
-        <footer>
-            <p>© 2023 Mohammad Taher Ahmadi | Game Developer & Embedded Systems Engineer</p>
-            <p>Visitors: <img src="https://visitcount.itsvg.in/api?id=MTAISBOSS&icon=5&color=5" alt="Visitor Count"></p>
-        </footer>
-    </div>
-</body>
-</html>
+<!-- Welcome Message -->
+<div align="center">
+  <h1>
+    Welcome to Mohammad Taher Ahmadi's GitHub Profile!
+    <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNnR3MHdqd2xzbzloaXdneTVpaW0wenh3NDRpMXVsc3R3YWxqYzNxaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/Pn11gNLmDBNSEAL0E7/giphy.gif" width="100">
+  </h1>
+</div>
+
+<!-- Typing Text -->
+<div align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&pause=500&size=22&color=7E3ACE&background=1A1A2E00&center=true&vCenter=true&width=650&lines=Professional+Game+Developer+%F0%9F%8E%AE;Embedded+Systems+%26+Robotics+Enthusiast+%F0%9F%A4%96;Full-Stack+Developer+%F0%9F%92%BB;7+Years+of+Technical+Excellence+%E2%9C%8A"/>
+</div>
+
+<!-- Profile Views -->
+<div align="center">
+  <img src="https://komarev.com/ghpvc/?username=MTAISBOSS&label=Profile%20views&color=7E3ACE&style=flat" alt="MTAISBOSS" />
+</div>
+
+## 🚀 About Me
+<div align="center">
+With over 7 years of experience in game development and a passion for embedded systems, I bridge the gap between virtual and physical worlds. I thrive on solving complex problems and creating immersive experiences through innovative technology solutions.
+</div>
+
+## 🛠 Tech Stack
+
+### 🎮 Game Development
+<div align="center">
+  <img src="https://img.shields.io/badge/Unity-100000?logo=unity&logoColor=white&style=for-the-badge" alt="Unity">
+  <img src="https://img.shields.io/badge/Phaser-FF0000?logo=phaser&logoColor=white&style=for-the-badge" alt="Phaser">
+  <img src="https://img.shields.io/badge/C%23-239120?logo=c-sharp&logoColor=white&style=for-the-badge" alt="C#">
+  <img src="https://img.shields.io/badge/C%2B%2B-00599C?logo=c%2B%2B&logoColor=white&style=for-the-badge" alt="C++">
+  <img src="https://img.shields.io/badge/Blender-F5792A?logo=blender&logoColor=white&style=for-the-badge" alt="Blender">
+  <img src="https://img.shields.io/badge/Aseprite-FFFFFF?logo=Aseprite&logoColor=7D929E&style=for-the-badge" alt="Aseprite">
+  <img src="https://img.shields.io/badge/FL%20Studio-000000?logo=fl-studio&logoColor=white&style=for-the-badge" alt="FL Studio">
+</div>
+
+### 🔌 Embedded Systems & IoT
+<div align="center">
+  <img src="https://img.shields.io/badge/Arduino-00979D?logo=Arduino&logoColor=white&style=for-the-badge" alt="Arduino">
+  <img src="https://img.shields.io/badge/Raspberry%20Pi-C51A4A?logo=Raspberry-Pi&logoColor=white&style=for-the-badge" alt="Raspberry Pi">
+  <img src="https://img.shields.io/badge/C-A8B9CC?logo=c&logoColor=white&style=for-the-badge" alt="C">
+  <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white&style=for-the-badge" alt="Python">
+</div>
+
+### 🌐 Web Development
+<div align="center">
+  <img src="https://img.shields.io/badge/Django-092E20?logo=django&logoColor=white&style=for-the-badge" alt="Django">
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white&style=for-the-badge" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge" alt="TypeScript">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black&style=for-the-badge" alt="JavaScript">
+  <img src="https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black&style=for-the-badge" alt="React">
+  <img src="https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white&style=for-the-badge" alt="HTML5">
+  <img src="https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white&style=for-the-badge" alt="CSS3">
+</div>
+
+### ⚙️ Tools & Platforms
+<div align="center">
+  <img src="https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white&style=for-the-badge" alt="Git">
+  <img src="https://img.shields.io/badge/GitLab-330F63?logo=gitlab&logoColor=white&style=for-the-badge" alt="GitLab">
+  <img src="https://img.shields.io/badge/Jira-0052CC?logo=Jira&logoColor=white&style=for-the-badge" alt="Jira">
+  <img src="https://img.shields.io/badge/.NET-512BD4?logo=.net&logoColor=white&style=for-the-badge" alt=".NET">
+  <img src="https://img.shields.io/badge/pgAdmin-336791?logo=postgresql&logoColor=white&style=for-the-badge" alt="pgAdmin">
+</div>
+
+## 📈 GitHub Stats
+<div align="center">
+  <img width="400" src="https://github-readme-stats.vercel.app/api?username=MTAISBOSS&show_icons=true&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE&icon_color=9370DB" alt="GitHub Stats">
+  <img width="400" src="https://github-readme-streak-stats.herokuapp.com/?user=MTAISBOSS&theme=midnight-purple&hide_border=true&background=1A1A2E&ring=7E3ACE&fire=9370DB" alt="GitHub Streak">
+</div>
+
+<div align="center">
+  <img width="400" src="https://github-readme-activity-graph.vercel.app/graph?username=MTAISBOSS&theme=midnight-purple&bg_color=1A1A2E&color=9370DB&line=7E3ACE&point=FDFDFD&hide_border=true" alt="Activity Graph">
+  <img width="400" src="https://github-readme-stats.vercel.app/api/top-langs/?username=MTAISBOSS&layout=compact&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Top Languages">
+</div>
+
+## 🏆 Featured Projects
+
+### 🕹 Game Development Projects
+<div align="center">
+  <a href="https://github.com/MTAISBOSS/Game-Console">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=Game-Console&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Game Console">
+  </a>
+</div>
+
+### 🤖 Embedded Systems Projects
+<div align="center">
+  <a href="https://github.com/MTAISBOSS/POV_Display">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=POV_Display&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="POV Display">
+  </a>
+</div>
+
+## 🌐 Connect With Me
+<div align="center">
+  <a href="https://www.linkedin.com/in/mohammad-taher-ahmadi-36a504208/" target="_blank">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
+  </a>
+  <a href="https://itch.io" target="_blank">
+    <img src="https://img.shields.io/badge/Itch.io-FA5C5C?style=for-the-badge&logo=itch.io&logoColor=white" alt="Itch.io">
+  </a>
+</div>
+
+## 💬 Random Dev Quote
+<div align="center">
+  <img src="https://quotes-github-readme.vercel.app/api?type=horizontal&theme=dark" alt="Random Dev Quote">
+</div>
