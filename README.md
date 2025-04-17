@@ -87,6 +87,31 @@ With over 7 years of experience in game development and a passion for embedded s
   <a href="https://github.com/MTAISBOSS/POV_Display">
     <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=POV_Display&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="POV Display">
   </a>
+   <a href="https://github.com/MTAISBOSS/Robot_Anim">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=Robot_Anim&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Robot_Anim">
+  </a>
+   <a href="https://github.com/MTAISBOSS/AHRS">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=AHRS&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="AHRS">
+  </a>
+   <a href="https://github.com/MTAISBOSS/Game-Console">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=Game-Console&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Game Console">
+  </a>
+</div>
+
+### 🔮 Web Development Projects
+<div align="center">
+  <a href="https://github.com/MTAISBOSS/btre">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=btre&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="BTRE">
+  </a>
+   <a href="https://github.com/MTAISBOSS/Game_Server">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=Game_Server&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Game_Server">
+  </a>
+   <a href="https://github.com/MTAISBOSS/CV-Resume">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=CV-Resume&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="CV-Resume">
+  </a>
+   <a href="https://github.com/MTAISBOSS/Navafy">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=Navafy&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Navafy">
+  </a>
 </div>
 
 ## 🌐 Connect With Me
