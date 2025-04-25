@@ -114,6 +114,13 @@ With over 7 years of experience in game development and a passion for embedded s
   </a>
 </div>
 
+## ⚔️ Code Warrior!
+<div align="center">
+ <a href="https://www.codewars.com/users/MTAISBOSS" target="_blank">
+    <img src="https://www.codewars.com/users/MTAISBOSS/badges/large" alt="codewars">
+  </a>
+</div>
+
 ## 🌐 Connect With Me
 <div align="center">
   <a href="https://www.linkedin.com/in/mohammad-taher-ahmadi-36a504208/" target="_blank">
