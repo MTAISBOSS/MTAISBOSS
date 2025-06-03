@@ -112,6 +112,9 @@ With over 7 years of experience in game development and a passion for embedded s
    <a href="https://github.com/MTAISBOSS/Navafy">
     <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=Navafy&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Navafy">
   </a>
+    <a href="https://github.com/MTAISBOSS/GoalTracker">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=GoalTracker&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="GoalTracker">
+  </a>
 </div>
 
 ## ⚔️ Code Warrior!
