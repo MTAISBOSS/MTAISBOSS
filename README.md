@@ -32,6 +32,7 @@ With over 7 years of experience in game development and a passion for embedded s
   <img src="https://img.shields.io/badge/Blender-F5792A?logo=blender&logoColor=white&style=for-the-badge" alt="Blender">
   <img src="https://img.shields.io/badge/Aseprite-FFFFFF?logo=Aseprite&logoColor=7D929E&style=for-the-badge" alt="Aseprite">
   <img src="https://img.shields.io/badge/FL%20Studio-000000?logo=fl-studio&logoColor=white&style=for-the-badge" alt="FL Studio">
+  <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white&style=for-the-badge" alt="Python">
 </div>
 
 ### 🔌 Embedded Systems & IoT
@@ -77,6 +78,9 @@ With over 7 years of experience in game development and a passion for embedded s
 
 ### 🕹 Game Development Projects
 <div align="center">
+  <a href="https://github.com/MTAISBOSS/GameFramework">
+    <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=GameFramework&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="GameFramework">
+  </a>
   <a href="https://github.com/MTAISBOSS/Game-Console">
     <img width="400" src="https://github-readme-stats.vercel.app/api/pin/?username=MTAISBOSS&repo=Game-Console&theme=midnight-purple&hide_border=true&bg_color=1A1A2E&title_color=7E3ACE" alt="Game Console">
   </a>
