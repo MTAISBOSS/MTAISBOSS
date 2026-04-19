@@ -55,6 +55,21 @@ My work ranges from **low‑level rendering pipelines and ECS architectures** to
 
 ---
 
+## 🎮 Game Development
+
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=unity,cs,javascript" />
+
+<br/>
+
+<img height="48" src="https://avatars.githubusercontent.com/u/5601777?s=200&v=4"/>
+<img height="48" src="https://avatars.githubusercontent.com/u/54856938?s=48&v=4"/>
+
+</div>
+
+---
+
 ## 🔌 Embedded Systems
 
 <div align="center">
@@ -79,7 +94,7 @@ My work ranges from **low‑level rendering pipelines and ECS architectures** to
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=git,github,gitlab,dotnet"/>
+<img src="https://skillicons.dev/icons?i=git,github,gitlab"/>
 
 </div>
 
