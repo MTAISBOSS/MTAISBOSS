@@ -30,6 +30,7 @@ class PortfolioUpdater {
     this.username = process.env.GITHUB_USERNAME;
     this.existingProjects = new Set();
     this.allProjects = [];
+    this.existingItchUrls = new Set();
   }
 
   async fetchGitHubProjects() {
@@ -61,7 +62,7 @@ class PortfolioUpdater {
         return response.data.games || [];
       }
       
-      // Fallback: Scrape the public page (less reliable but works without API key)
+      // Fallback: Scrape the public page
       console.log('⚠️  No ITCH_API_KEY found, using public page scraping...');
       return await this.scrapeItchPage();
       
@@ -76,9 +77,9 @@ class PortfolioUpdater {
       const response = await axios.get(`https://${CONFIG.ITCH_USERNAME}.itch.io`);
       const html = response.data;
       
-      // Parse game data from HTML
+      // Parse game data from HTML - updated regex for better matching
       const games = [];
-      const gameRegex = /<a href="(https:\/\/[^"]*\.itch\.io\/[^"]*)"[^>]*>[\s\S]*?<div class="game_title"[^>]*>([^<]+)<\/div>[\s\S]*?<div class="game_text"[^>]*>([^<]*)<\/div>/g;
+      const gameRegex = /<a href="(https:\/\/[^"]*\.itch\.io\/[^"]*)"[^>]*class="[^"]*game_link[^"]*"[^>]*>[\s\S]*?<div class="game_title"[^>]*>([^<]+)<\/div>[\s\S]*?<div class="game_text"[^>]*>([^<]*)<\/div>/g;
       
       let match;
       while ((match = gameRegex.exec(html)) !== null) {
@@ -87,13 +88,39 @@ class PortfolioUpdater {
         const description = match[3].trim() || `${title} - A game project`;
         
         // Only add if it's a game page (not community/profile links)
-        if (url.includes('/itch.io/') && url !== `https://${CONFIG.ITCH_USERNAME}.itch.io/`) {
+        if (url !== `https://${CONFIG.ITCH_USERNAME}.itch.io/` && 
+            !url.includes('/community/') &&
+            !url.includes('/profile/')) {
           games.push({
             title: title,
             url: url,
             short_text: description,
             type: this.determineGameType(title, description)
           });
+        }
+      }
+      
+      // If no games found with specific class, try broader search
+      if (games.length === 0) {
+        console.log('  Trying alternative parsing method...');
+        const altRegex = /<a href="(https:\/\/[^"]*\.itch\.io\/([^"\/]+))"[^>]*>/g;
+        const seenUrls = new Set();
+        
+        while ((match = altRegex.exec(html)) !== null) {
+          const url = match[1];
+          const slug = match[2];
+          
+          if (!seenUrls.has(url) && 
+              url !== `https://${CONFIG.ITCH_USERNAME}.itch.io/` &&
+              !['community', 'profile', 'games', 'tools', 'assets'].includes(slug)) {
+            seenUrls.add(url);
+            games.push({
+              title: slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              url: url,
+              short_text: 'A game project on itch.io',
+              type: 'Game Project'
+            });
+          }
         }
       }
       
@@ -156,6 +183,7 @@ class PortfolioUpdater {
     if (text.includes('platformer')) return 'Platformer Game';
     if (text.includes('action')) return 'Action Game';
     if (text.includes('endless runner')) return 'Endless Runner Game';
+    if (text.includes('avoid')) return 'Avoidance Game';
     return 'Game Project';
   }
 
@@ -208,9 +236,10 @@ class PortfolioUpdater {
   }
 
   generateProjectCard(project) {
-    // Generate screenshots HTML
     let screenshotsHTML = '';
+    
     if (project.screenshots && project.screenshots.length > 0) {
+      // Use itch.io screenshots directly
       screenshotsHTML = `
             <div
                 class="project-slider"
@@ -235,9 +264,12 @@ class PortfolioUpdater {
     }
 
     // Generate tags HTML
-    const tagsHTML = project.tags
-      .map(tag => `<span class="tag${tag.class ? ' ' + tag.class : ''}">${tag.name}</span>`)
-      .join('\n                ');
+    let tagsHTML = '';
+    if (project.tags && project.tags.length > 0) {
+      tagsHTML = project.tags
+        .map(tag => `<span class="tag${tag.class ? ' ' + tag.class : ''}">${tag.name}</span>`)
+        .join('\n                ');
+    }
 
     // Determine link label
     let linkLabel = 'Link →';
@@ -261,11 +293,27 @@ class PortfolioUpdater {
   }
 
   parseExistingProjects(html) {
+    // Extract existing project names from the HTML
     const nameRegex = /<h3>(.*?)<\/h3>/g;
     let match;
     while ((match = nameRegex.exec(html)) !== null) {
       this.existingProjects.add(match[1].trim());
     }
+    
+    // Also track existing itch.io URLs to avoid duplicates
+    const itchUrlRegex = /href="(https:\/\/mtaisboss\.itch\.io\/[^"]*)"/g;
+    while ((match = itchUrlRegex.exec(html)) !== null) {
+      this.existingItchUrls.add(match[1]);
+      // Also add the expected name from URL
+      const urlParts = match[1].split('/');
+      const slug = urlParts[urlParts.length - 1];
+      if (slug && slug !== 'mtaisboss') {
+        const nameFromUrl = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        this.existingProjects.add(nameFromUrl);
+      }
+    }
+    
+    console.log(`Found ${this.existingProjects.size} existing projects`);
   }
 
   async updatePortfolio() {
@@ -284,15 +332,16 @@ class PortfolioUpdater {
       // Process GitHub projects
       const githubProjects = githubRepos.map(repo => this.processGitHubProject(repo));
       
-      // Process itch.io projects (with details)
+      // Process itch.io projects (with details) - filter out existing ones
+      const newItchGames = itchGames.filter(game => !this.existingItchUrls.has(game.url));
       const itchProjects = await Promise.all(
-        itchGames.map(game => this.processItchProject(game))
+        newItchGames.map(game => this.processItchProject(game))
       );
 
       // Combine all projects
       const allProjects = [...githubProjects, ...itchProjects];
       
-      // Find new projects
+      // Find new projects (not already in the HTML)
       const newProjects = allProjects.filter(project => 
         !this.existingProjects.has(project.name)
       );
@@ -305,17 +354,30 @@ class PortfolioUpdater {
       console.log(`\n✨ Adding ${newProjects.length} new projects:`);
       newProjects.forEach(p => console.log(`  ${p.source === 'itch.io' ? '🎮' : '📁'} ${p.name}`));
 
-      // Generate cards
+      // Generate cards for new projects
       const newCards = newProjects
         .map(project => this.generateProjectCard(project))
         .join('\n');
 
-      // Insert into HTML
+      // Insert new cards BEFORE the "Additional Indie" card, inside the grid
       const additionalCardMarker = '<div class="card" style="margin-top:15px;">';
+      
       if (html.includes(additionalCardMarker)) {
+        // Insert new cards before the "Additional" card
         html = html.replace(additionalCardMarker, `${newCards}\n${additionalCardMarker}`);
+        console.log('✅ Inserted new cards before "Additional Indie" section');
+      } else {
+        // If no additional card, insert before closing grid div
+        const gridClosing = '    </div>\n\n</section>';
+        html = html.replace(gridClosing, `${newCards}\n${gridClosing}`);
+        console.log('✅ Inserted new cards before grid closing');
       }
 
+      // Ensure all article cards are within the grid div
+      // Fix any potential HTML structure issues
+      html = this.fixGridStructure(html);
+
+      // Write updated file
       await fs.writeFile(filePath, html, 'utf8');
       console.log('✅ Portfolio updated successfully!');
       
@@ -323,6 +385,33 @@ class PortfolioUpdater {
       console.error('❌ Error updating portfolio:', error);
       throw error;
     }
+  }
+
+  fixGridStructure(html) {
+    // Ensure the grid div contains all article cards
+    // Find the grid opening and closing positions
+    const gridOpen = '<div class="grid">';
+    const gridClose = '    </div>';
+    
+    // The "Additional Indie" card should be inside the grid but after all articles
+    // This function ensures proper structure
+    
+    // Check if there are article cards after the closing grid div
+    const gridClosePos = html.lastIndexOf(gridClose);
+    const sectionEndPos = html.indexOf('</section>', gridClosePos);
+    
+    if (gridClosePos !== -1 && sectionEndPos !== -1) {
+      const betweenGridAndSection = html.substring(gridClosePos + gridClose.length, sectionEndPos);
+      
+      // If there are article cards between grid close and section end, move them inside grid
+      if (betweenGridAndSection.includes('<article class="card">')) {
+        console.log('🔧 Fixing grid structure - moving articles inside grid...');
+        html = html.replace(gridClose, '');
+        html = html.replace('</section>', `    </div>\n\n</section>`);
+      }
+    }
+    
+    return html;
   }
 }
 
