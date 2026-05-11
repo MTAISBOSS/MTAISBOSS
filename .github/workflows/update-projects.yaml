@@ -4,8 +4,14 @@ on:
   schedule:
     - cron: '0 */6 * * *'  # Runs every 6 hours
   workflow_dispatch:  # Allows manual trigger
-  repository:
-    types: [created]  # Triggers when a new repo is created
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-projects.yaml'
+  # Trigger when a new repository is created (via repository_dispatch)
+  repository_dispatch:
+    types: [new-repo]
 
 jobs:
   update-projects:
@@ -26,12 +32,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install @octokit/rest fs-extra
+          npm install @octokit/rest fs-extra axios
 
       - name: Update selected projects
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
+          ITCH_API_KEY: ${{ secrets.ITCH_API_KEY }}
         run: node .github/scripts/update-projects.js
 
       - name: Commit and push changes

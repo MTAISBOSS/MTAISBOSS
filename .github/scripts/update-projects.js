@@ -1,13 +1,17 @@
 const { Octokit } = require('@octokit/rest');
 const fs = require('fs-extra');
-const path = require('path');
+const axios = require('axios');
 
 // Configuration
 const CONFIG = {
-  // Only include repos with this topic
+  // GitHub settings
   REQUIRED_TOPIC: 'resume',
   
-  // Language to tag mapping (customize based on your tech stack)
+  // Itch.io settings
+  ITCH_USERNAME: 'mtaisboss',
+  ITCH_API_URL: `https://itch.io/api/1/${process.env.ITCH_API_KEY || 'YOUR_ITCH_API_KEY'}/my-games`,
+  
+  // Language to tag mapping
   LANGUAGE_TAGS: {
     'c#': '',
     'c++': '',
@@ -17,163 +21,231 @@ const CONFIG = {
     'shaderlab': 'purple',
     'hlsl': 'purple',
     'glsl': 'purple'
-  },
-  
-  // Project type indicators based on topics
-  PROJECT_TYPES: {
-    'unity': ['unity', 'game', 'unity3d', 'hdrp', 'urp'],
-    'unreal': ['unreal', 'ue4', 'ue5'],
-    'mobile': ['mobile', 'android', 'ios'],
-    'web': ['web', 'website', 'frontend', 'backend'],
-    'ai': ['ai', 'ml', 'machine-learning', 'neural'],
-    'graphics': ['graphics', 'shader', 'rendering', 'ray-tracing']
   }
 };
 
-class ProjectUpdater {
+class PortfolioUpdater {
   constructor() {
     this.octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
     this.username = process.env.GITHUB_USERNAME;
     this.existingProjects = new Set();
-    this.resumeProjects = [];
+    this.allProjects = [];
   }
 
-  async fetchResumeRepos() {
+  async fetchGitHubProjects() {
+    console.log('🔍 Fetching GitHub repositories with "resume" topic...');
+    
+    const allRepos = await this.octokit.paginate(
+      this.octokit.rest.repos.listForUser, {
+        username: this.username,
+        type: 'public',
+        sort: 'updated',
+        direction: 'desc',
+        per_page: 100
+      }
+    );
+
+    return allRepos.filter(repo => 
+      !repo.fork && !repo.archived && 
+      repo.topics?.includes(CONFIG.REQUIRED_TOPIC)
+    );
+  }
+
+  async fetchItchProjects() {
+    console.log('🎮 Fetching itch.io projects...');
+    
     try {
-      console.log(`Fetching public repositories with '${CONFIG.REQUIRED_TOPIC}' topic...`);
+      // If you have an API key, use the authenticated endpoint
+      if (process.env.ITCH_API_KEY) {
+        const response = await axios.get(CONFIG.ITCH_API_URL);
+        return response.data.games || [];
+      }
       
-      // Fetch all public repos
-      const allRepos = await this.octokit.paginate(
-        this.octokit.rest.repos.listForUser,
-        {
-          username: this.username,
-          type: 'public',
-          sort: 'updated',
-          direction: 'desc',
-          per_page: 100
-        }
-      );
-
-      // Filter repos that:
-      // 1. Are not forks
-      // 2. Are not archived
-      // 3. Have the 'resume' topic
-      const resumeRepos = allRepos.filter(repo => 
-        !repo.fork && 
-        !repo.archived &&
-        repo.topics && 
-        repo.topics.includes(CONFIG.REQUIRED_TOPIC)
-      );
-
-      console.log(`Found ${resumeRepos.length} repositories with '${CONFIG.REQUIRED_TOPIC}' topic`);
-      resumeRepos.forEach(repo => {
-        console.log(`  - ${repo.name}: ${repo.description || 'No description'}`);
-      });
-
-      return resumeRepos;
+      // Fallback: Scrape the public page (less reliable but works without API key)
+      console.log('⚠️  No ITCH_API_KEY found, using public page scraping...');
+      return await this.scrapeItchPage();
+      
     } catch (error) {
-      console.error('Error fetching repos:', error);
+      console.error('Error fetching itch.io projects:', error.message);
       return [];
     }
   }
 
-  extractProjectInfo(repo) {
+  async scrapeItchPage() {
+    try {
+      const response = await axios.get(`https://${CONFIG.ITCH_USERNAME}.itch.io`);
+      const html = response.data;
+      
+      // Parse game data from HTML
+      const games = [];
+      const gameRegex = /<a href="(https:\/\/[^"]*\.itch\.io\/[^"]*)"[^>]*>[\s\S]*?<div class="game_title"[^>]*>([^<]+)<\/div>[\s\S]*?<div class="game_text"[^>]*>([^<]*)<\/div>/g;
+      
+      let match;
+      while ((match = gameRegex.exec(html)) !== null) {
+        const url = match[1];
+        const title = match[2].trim();
+        const description = match[3].trim() || `${title} - A game project`;
+        
+        // Only add if it's a game page (not community/profile links)
+        if (url.includes('/itch.io/') && url !== `https://${CONFIG.ITCH_USERNAME}.itch.io/`) {
+          games.push({
+            title: title,
+            url: url,
+            short_text: description,
+            type: this.determineGameType(title, description)
+          });
+        }
+      }
+      
+      console.log(`  📦 Found ${games.length} itch.io projects`);
+      return games;
+      
+    } catch (error) {
+      console.error('Error scraping itch.io:', error.message);
+      return [];
+    }
+  }
+
+  async getItchGameDetails(gameUrl) {
+    try {
+      const response = await axios.get(gameUrl);
+      const html = response.data;
+      
+      // Extract screenshots
+      const screenshots = [];
+      const imgRegex = /<img[^>]+src="([^"]+)"[^>]*>/g;
+      let match;
+      while ((match = imgRegex.exec(html)) !== null) {
+        if (match[1].includes('itch.zone') || match[1].includes('itch.io')) {
+          screenshots.push(match[1]);
+        }
+      }
+      
+      // Extract full description
+      const descMatch = html.match(/<div class="formatted_description">([\s\S]*?)<\/div>/);
+      const fullDescription = descMatch ? descMatch[1].replace(/<[^>]+>/g, '').trim() : '';
+      
+      // Extract genres/tags
+      const genres = [];
+      const genreRegex = /<a href="\/genre\/[^"]*">([^<]+)<\/a>/g;
+      while ((match = genreRegex.exec(html)) !== null) {
+        genres.push(match[1]);
+      }
+      
+      return {
+        screenshots: screenshots.slice(0, 3),
+        fullDescription: fullDescription,
+        genres: genres.slice(0, 3)
+      };
+      
+    } catch (error) {
+      console.error(`Error fetching details for ${gameUrl}:`, error.message);
+      return {
+        screenshots: [],
+        fullDescription: '',
+        genres: []
+      };
+    }
+  }
+
+  determineGameType(title, description) {
+    const text = (title + ' ' + description).toLowerCase();
+    if (text.includes('survival')) return 'Survival Game';
+    if (text.includes('puzzle')) return 'Puzzle Game';
+    if (text.includes('shooter') || text.includes('fps')) return 'Shooter Game';
+    if (text.includes('platformer')) return 'Platformer Game';
+    if (text.includes('action')) return 'Action Game';
+    if (text.includes('endless runner')) return 'Endless Runner Game';
+    return 'Game Project';
+  }
+
+  async processItchProject(game) {
+    console.log(`  🎮 Processing: ${game.title}`);
+    
+    // Get additional details
+    const details = await this.getItchGameDetails(game.url);
+    
+    return {
+      name: game.title,
+      description: details.fullDescription || game.short_text || 'A creative game project',
+      type: game.type || 'Game Project',
+      url: game.url,
+      tags: details.genres.map(g => ({ name: g, class: '' })),
+      screenshots: details.screenshots,
+      source: 'itch.io'
+    };
+  }
+
+  processGitHubProject(repo) {
     const topics = repo.topics.filter(t => t !== CONFIG.REQUIRED_TOPIC) || [];
     
-    // Determine project type based on topics
-    let projectType = 'Project';
-    for (const [type, keywords] of Object.entries(CONFIG.PROJECT_TYPES)) {
-      if (keywords.some(keyword => 
-        repo.name.toLowerCase().includes(keyword) ||
-        repo.description?.toLowerCase().includes(keyword) ||
-        topics.some(topic => topic.toLowerCase().includes(keyword))
-      )) {
-        projectType = type.charAt(0).toUpperCase() + type.slice(1) + ' Project';
-        break;
-      }
-    }
-
-    // Check for specific project type indicators
-    if (repo.description?.toLowerCase().includes('game jam')) {
-      projectType = 'Game Jam Project';
-    } else if (repo.description?.toLowerCase().includes('published')) {
-      projectType = 'Published ' + projectType;
-    } else if (repo.description?.toLowerCase().includes('award')) {
-      projectType = 'Award-Winning ' + projectType;
-    }
-
-    // Generate tags from language and topics
+    // Generate tags
     const tags = [];
-    
-    // Add language as first tag
     if (repo.language) {
-      const langLower = repo.language.toLowerCase();
       tags.push({
         name: repo.language,
-        class: CONFIG.LANGUAGE_TAGS[langLower] || ''
+        class: CONFIG.LANGUAGE_TAGS[repo.language.toLowerCase()] || ''
       });
     }
     
-    // Add topic-based tags (excluding 'resume' and language)
-    topics.forEach(topic => {
-      const formattedName = topic
-        .replace(/-/g, ' ')
-        .replace(/\b\w/g, l => l.toUpperCase());
-      
+    topics.slice(0, 3).forEach(topic => {
+      const formattedName = topic.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
       if (!tags.find(t => t.name.toLowerCase() === formattedName.toLowerCase())) {
-        // Determine tag class based on topic
-        let tagClass = '';
-        if (topic.includes('unity')) tagClass = 'yellow';
-        else if (topic.includes('pixel')) tagClass = 'yellow';
-        else if (topic.includes('shader')) tagClass = 'yellow';
-        
-        tags.push({
-          name: formattedName,
-          class: tagClass
-        });
+        tags.push({ name: formattedName, class: '' });
       }
     });
 
-    // Get the link URL (prefer homepage if available)
-    const url = repo.homepage || `https://github.com/${this.username}/${repo.name}`;
-
     return {
       name: repo.name.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
-      description: repo.description || 'A project built with passion and attention to detail.',
-      type: projectType,
-      url: url,
-      tags: tags.slice(0, 4), // Max 4 tags
-      repoName: repo.name // Keep original name for file naming
+      description: repo.description || 'A project built with passion.',
+      type: 'GitHub Project',
+      url: repo.homepage || `https://github.com/${this.username}/${repo.name}`,
+      tags: tags.slice(0, 4),
+      screenshots: [],
+      source: 'github',
+      repoName: repo.name
     };
   }
 
   generateProjectCard(project) {
-    const tagsHTML = project.tags
-      .map(tag => `<span class="tag${tag.class ? ' ' + tag.class : ''}">${tag.name}</span>`)
-      .join('\n                ');
-
-    // Determine link type and label
-    let linkLabel, linkUrl;
-    if (project.url.includes('itch.io')) {
-      linkLabel = 'Play →';
-    } else if (project.url.includes('github.com')) {
-      linkLabel = 'GitHub →';
-    } else {
-      linkLabel = 'Link →';
-    }
-
-    return `
-        <article class="card">
+    // Generate screenshots HTML
+    let screenshotsHTML = '';
+    if (project.screenshots && project.screenshots.length > 0) {
+      screenshotsHTML = `
             <div
                 class="project-slider"
                 data-alt="${project.name} screenshot"
                 data-images="
-                    assets/${project.repoName}.png,
-                    assets/${project.repoName}1.png,
-                    assets/${project.repoName}2.png
+                    ${project.screenshots.slice(0, 3).join(',\n                    ')}
                 "
-            ></div>
+            ></div>`;
+    } else if (project.source === 'github') {
+      // Fallback to local assets for GitHub projects
+      const assetName = project.repoName || project.name.toLowerCase().replace(/\s+/g, '-');
+      screenshotsHTML = `
+            <div
+                class="project-slider"
+                data-alt="${project.name} screenshot"
+                data-images="
+                    assets/${assetName}.png,
+                    assets/${assetName}1.png,
+                    assets/${assetName}2.png
+                "
+            ></div>`;
+    }
 
+    // Generate tags HTML
+    const tagsHTML = project.tags
+      .map(tag => `<span class="tag${tag.class ? ' ' + tag.class : ''}">${tag.name}</span>`)
+      .join('\n                ');
+
+    // Determine link label
+    let linkLabel = 'Link →';
+    if (project.url.includes('itch.io')) linkLabel = 'Play →';
+    else if (project.source === 'github') linkLabel = 'GitHub →';
+
+    return `
+        <article class="card">${screenshotsHTML}
             <h3>${project.name}</h3>
             <div class="meta">${project.type}</div>
             <p>
@@ -189,84 +261,74 @@ class ProjectUpdater {
   }
 
   parseExistingProjects(html) {
-    // Extract existing project names from the HTML
     const nameRegex = /<h3>(.*?)<\/h3>/g;
     let match;
     while ((match = nameRegex.exec(html)) !== null) {
       this.existingProjects.add(match[1].trim());
     }
-    console.log(`Found ${this.existingProjects.size} existing projects`);
   }
 
-  async updateProjectsFile() {
+  async updatePortfolio() {
     const filePath = 'docs/partials/selected-projects.html';
     
     try {
-      // Read existing file
       let html = await fs.readFile(filePath, 'utf8');
-      
-      // Parse existing projects
       this.parseExistingProjects(html);
+
+      // Fetch from both sources
+      const [githubRepos, itchGames] = await Promise.all([
+        this.fetchGitHubProjects(),
+        this.fetchItchProjects()
+      ]);
+
+      // Process GitHub projects
+      const githubProjects = githubRepos.map(repo => this.processGitHubProject(repo));
       
-      // Fetch resume-tagged repos
-      const repos = await this.fetchResumeRepos();
+      // Process itch.io projects (with details)
+      const itchProjects = await Promise.all(
+        itchGames.map(game => this.processItchProject(game))
+      );
+
+      // Combine all projects
+      const allProjects = [...githubProjects, ...itchProjects];
       
-      if (repos.length === 0) {
-        console.log(`No repositories found with '${CONFIG.REQUIRED_TOPIC}' topic`);
-        return;
-      }
-      
-      // Extract project info for all resume repos
-      const allResumeProjects = repos.map(repo => this.extractProjectInfo(repo));
-      
-      // Find new projects that don't exist yet
-      const newProjects = allResumeProjects.filter(project => 
+      // Find new projects
+      const newProjects = allProjects.filter(project => 
         !this.existingProjects.has(project.name)
       );
 
       if (newProjects.length === 0) {
-        console.log('All resume projects already exist in the page');
+        console.log('✅ All projects are already in the portfolio');
         return;
       }
 
-      console.log(`\n📦 Adding ${newProjects.length} new projects:`);
-      newProjects.forEach(p => console.log(`  ✨ ${p.name}`));
+      console.log(`\n✨ Adding ${newProjects.length} new projects:`);
+      newProjects.forEach(p => console.log(`  ${p.source === 'itch.io' ? '🎮' : '📁'} ${p.name}`));
 
-      // Generate cards for new projects
+      // Generate cards
       const newCards = newProjects
         .map(project => this.generateProjectCard(project))
         .join('\n');
 
-      // Insert new cards before the "Additional" card or at the end of the grid
+      // Insert into HTML
       const additionalCardMarker = '<div class="card" style="margin-top:15px;">';
-      const gridEndMarker = '    </div>\n\n    <div class="card" style="margin-top:15px;">';
-      
       if (html.includes(additionalCardMarker)) {
-        // Insert before the additional card
         html = html.replace(additionalCardMarker, `${newCards}\n${additionalCardMarker}`);
-      } else {
-        // Insert before the closing section div
-        const sectionEnd = '</section>';
-        html = html.replace(sectionEnd, `${newCards}\n${sectionEnd}`);
       }
 
-      // Write updated file
       await fs.writeFile(filePath, html, 'utf8');
-      
-      console.log('\n✅ Successfully updated selected projects');
-      console.log(`   File: ${filePath}`);
-      console.log(`   Added: ${newProjects.length} projects`);
+      console.log('✅ Portfolio updated successfully!');
       
     } catch (error) {
-      console.error('❌ Error updating projects:', error);
+      console.error('❌ Error updating portfolio:', error);
       throw error;
     }
   }
 }
 
 // Execute
-const updater = new ProjectUpdater();
-updater.updateProjects().catch(error => {
+const updater = new PortfolioUpdater();
+updater.updatePortfolio().catch(error => {
   console.error('Script failed:', error);
   process.exit(1);
 });
